@@ -23,7 +23,6 @@ import (
 
 	"github.com/it-chain/engine/consensus/pbft"
 	"github.com/it-chain/engine/consensus/pbft/api"
-	"github.com/it-chain/engine/consensus/pbft/infra/mem"
 	"github.com/it-chain/engine/consensus/pbft/test/mock"
 	"github.com/stretchr/testify/assert"
 )
@@ -74,7 +73,7 @@ func TestConsensusApi_StartConsensus(t *testing.T) {
 				peerNum         int
 				isRepoFull      bool
 			}{normalBlock, true, 5, true},
-			err: mem.ErrConsensusAlreadyExist,
+			err: pbft.ErrConsensusAlreadyExist,
 		},
 	}
 
@@ -125,7 +124,7 @@ func TestConsensusApi_HandlePrePrepareMsg(t *testing.T) {
 				peerNum         int
 				isRepoFull      bool
 			}{validLeaderPrePrepareMsg, false, 5, true},
-			err: mem.ErrConsensusAlreadyExist,
+			err: pbft.ErrConsensusAlreadyExist,
 		},
 		"Case 3 PrePrepareMsg의 Sender id와 Request된 Leader id가 일치하지 않을 경우": {
 			input: struct {
@@ -193,7 +192,7 @@ func TestConsensusApi_HandlePrepareMsg(t *testing.T) {
 				peerNum         int
 				isRepoFull      bool
 			}{validPrepareMsg, false, 5, false},
-			err: mem.ErrLoadConsensus,
+			err: pbft.ErrLoadConsensus,
 		},
 	}
 
@@ -244,7 +243,7 @@ func TestConsensusApi_HandleCommitMsg(t *testing.T) {
 				isRepoFull      bool
 				isNormalBlock   bool
 			}{validCommitMsg, false, 5, false, true},
-			err: mem.ErrLoadConsensus,
+			err: pbft.ErrLoadConsensus,
 		},
 		"Case 3 repo에 저장된 pbft의 cid와 commitMsg의 cid가 일치하지 않은 경우": {
 			input: struct {
@@ -334,7 +333,7 @@ func setUpApiCondition(isNeedConsensus bool, peerNum int, isRepoFull bool, isNor
 		}
 		return nil
 	}
-	repo := mem.NewStateRepository()
+	repo := pbft.NewStateRepository()
 	if isRepoFull && isNormalBlock {
 
 		savedConsensus := pbft.State{

@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package mem
+package pbft
 
 import (
 	"sync"
 
 	"errors"
-
-	"github.com/it-chain/engine/consensus/pbft"
 )
 
 var ErrConsensusAlreadyExist = errors.New("State Already Exist")
 var ErrLoadConsensus = errors.New("There is no state for loading")
 
 type StateRepository struct {
-	state *pbft.State
+	state *State
 	sync.RWMutex
 }
 
@@ -37,7 +35,7 @@ func NewStateRepository() StateRepository {
 		RWMutex: sync.RWMutex{},
 	}
 }
-func (repo *StateRepository) Save(state pbft.State) error {
+func (repo *StateRepository) Save(state State) error {
 
 	repo.Lock()
 	defer repo.Unlock()
@@ -49,7 +47,7 @@ func (repo *StateRepository) Save(state pbft.State) error {
 
 	return nil
 }
-func (repo *StateRepository) Load() (*pbft.State, error) {
+func (repo *StateRepository) Load() (*State, error) {
 
 	if repo.state == nil {
 		return nil, ErrLoadConsensus

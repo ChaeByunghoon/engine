@@ -20,20 +20,19 @@ import (
 	"errors"
 
 	"github.com/it-chain/engine/consensus/pbft"
-	"github.com/it-chain/engine/consensus/pbft/infra/mem"
 )
 
 type StateApi struct {
 	propagateService  pbft.PropagateService
 	confirmService    pbft.ConfirmService
 	parliamentService pbft.ParliamentService
-	repo              mem.StateRepository
+	repo              pbft.StateRepository
 }
 
 var ConsensusCreateError = errors.New("Consensus can't be created")
 
 func NewStateApi(propagateService pbft.PropagateService,
-	confirmService pbft.ConfirmService, parliamentService pbft.ParliamentService, repo mem.StateRepository) StateApi {
+	confirmService pbft.ConfirmService, parliamentService pbft.ParliamentService, repo pbft.StateRepository) StateApi {
 	return StateApi{
 		propagateService:  propagateService,
 		confirmService:    confirmService,
