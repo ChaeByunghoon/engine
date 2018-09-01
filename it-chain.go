@@ -36,6 +36,9 @@ import (
 	"github.com/it-chain/engine/common/rabbitmq/pubsub"
 	"github.com/it-chain/engine/common/rabbitmq/rpc"
 	"github.com/it-chain/engine/conf"
+	"github.com/it-chain/engine/consensus/pbft"
+	"github.com/it-chain/engine/consensus/pbft/api"
+	"github.com/it-chain/engine/consensus/pbft/infra/adapter"
 	icodeApi "github.com/it-chain/engine/ivm/api"
 	icodeAdapter "github.com/it-chain/engine/ivm/infra/adapter"
 	icodeInfra "github.com/it-chain/engine/ivm/infra/git"
@@ -263,4 +266,20 @@ func initBlockchain(config *conf.Configuration, server rpc.Server) func() {
 	return func() {
 		os.RemoveAll("./db")
 	}
+}
+
+func initConsensus(config *conf.Configuration) func() {
+	logger.Infof(nil, "[Main] Consensus is staring")
+
+	publisherId := "publisher.1"
+	consensusRepo := pbft.NewStateRepository()
+
+	eventService := common.NewEventService(config.Engine.Amqp, "Event")
+	consensusEventService := adapter.NewEventService()
+	propagateService := adapter.NewPropagateService()
+
+	parliamentService := adapter.NewParliamentService()
+
+	stateApi := api.NewStateApi(publisherId, propagateService, consensusEventService, parliamentService, consensusRepo)
+
 }
